@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#142337">
+  <meta name="description" content="Practica el vocabulario de Social Issues a tu ritmo, con tarjetas y escritura.">
+  <title>Social Issues · Practica a tu ritmo</title>
+  <style>
+    :root{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:#eef5f5;color:#142337}
+    *{box-sizing:border-box}body{margin:0;min-height:100dvh}button,input{font:inherit}button{cursor:pointer}
+    .shell{max-width:660px;min-height:100dvh;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 18px calc(26px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+    header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+    .eyebrow{font-size:12px;font-weight:850;letter-spacing:.18em;text-transform:uppercase;color:#186e71;margin:0 0 5px}
+    h1{font-size:clamp(27px,7vw,38px);line-height:1.08;letter-spacing:-.045em;margin:0}
+    .learned{font-size:13px;color:#46636b;background:#fff;border:1px solid #cbdede;border-radius:100px;padding:8px 11px;white-space:nowrap;margin-top:3px}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#dce9e9;padding:5px;border-radius:16px;margin-bottom:17px}
+    .tab{border:0;border-radius:12px;padding:12px;color:#385960;background:transparent;font-weight:800;min-height:47px}
+    .tab[aria-selected="true"]{background:#fff;color:#123d43;box-shadow:0 2px 8px #133c4315}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
+    .filter{display:flex;align-items:center;gap:8px;font-size:14px;color:#40565e}
+    select{border:1px solid #bfdbdc;background:white;color:#17383e;border-radius:10px;padding:9px 30px 9px 10px;min-height:42px;max-width:180px}
+    .position{color:#456970;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+    main{flex:1;display:flex;flex-direction:column}
+    .card{min-height:clamp(340px,52dvh,500px);border-radius:27px;padding:26px 24px 28px;background:#142b41;color:white;box-shadow:0 17px 40px #17374623;display:flex;flex-direction:column;position:relative;overflow:hidden}
+    .card:before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;background:#ffffff0b;right:-120px;top:-140px}
+    .card-top{display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:1}
+    .card-label{font-size:12px;text-transform:uppercase;letter-spacing:.15em;font-weight:800;color:#9dded9}
+    .sound{border:1px solid #ffffff5b;background:#ffffff12;color:white;border-radius:100px;padding:9px 13px;font-size:14px;min-height:42px}
+    .word-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;z-index:1}
+    .pictogram{font-size:clamp(54px,15vw,84px);line-height:1}.word{font-size:clamp(32px,8vw,56px);line-height:1.1;letter-spacing:-.04em;font-weight:850;overflow-wrap:anywhere;margin:0}
+    .sentence{font-size:15px;color:#c6e0e3;line-height:1.45;margin:0;text-wrap:balance}
+    .translation{background:#ffffff18;border:1px solid #ffffff30;border-radius:16px;padding:15px 18px;font-size:clamp(20px,5vw,27px);font-weight:750;text-align:center;color:#d3f6bd;z-index:1}
+    .reveal{border:1px dashed #d1e6e8;background:transparent;color:#dbeff1;border-radius:16px;padding:15px;font-size:16px;font-weight:700;z-index:1;min-height:58px}
+    .buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    button.action{min-height:55px;border-radius:14px;font-size:16px;font-weight:850;padding:12px 14px}
+    .again{border:1px solid #aacdcc;background:#fff;color:#1b5159}.known{border:0;background:#1b7771;color:#fff}.known:hover{background:#14615c}
+    .helper{font-size:13px;line-height:1.4;color:#607980;text-align:center;margin:16px 4px 0}
+    .write-panel{background:#fff;border-radius:27px;border:1px solid #cfe2e2;padding:26px 22px 24px;box-shadow:0 14px 40px #17374612;min-height:440px;display:flex;flex-direction:column}
+    .write-label{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:#1b7771;font-weight:850;margin:0 0 16px}
+    .write-icon{font-size:58px;margin:5px 0}.write-term{font-size:clamp(27px,7vw,42px);letter-spacing:-.04em;line-height:1.13;margin:5px 0 24px;overflow-wrap:anywhere}
+    .write-prompt{color:#5c737b;font-size:15px;margin:0 0 8px}
+    input{width:100%;font-size:19px;padding:15px 17px;border:1px solid #9cbebd;border-radius:14px;background:#f7fbfa;color:#142b41;min-height:56px}
+    input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #a7e4a0;outline-offset:2px}
+    .write-actions{display:flex;gap:8px;margin-top:12px}.check{background:#1b7771;color:#fff;border:0;border-radius:13px;min-height:51px;padding:10px 22px;font-weight:850}.hint{background:#e8f3f2;color:#24555b;border:0;border-radius:13px;min-height:51px;padding:10px 15px;font-weight:750}
+    .response{min-height:70px;font-size:16px;font-weight:700;line-height:1.35;margin:18px 0 0;color:#395b63}.response.good{color:#176350}.response .answer-line{display:block;font-weight:650;margin-top:5px}
+    .write-next{margin-top:auto;width:100%;min-height:55px;border:0;border-radius:14px;background:#d5eae7;color:#174b4e;font-size:16px;font-weight:850}
+    .empty{background:#fff;border:1px solid #cfe2e2;border-radius:26px;padding:34px 25px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:370px}.empty-icon{font-size:65px}.empty h2{font-size:30px;margin:16px 0 4px}.empty p{color:#55717a;line-height:1.45}.empty button{border:0;background:#1b7771;color:#fff;border-radius:14px;padding:14px 18px;min-height:51px;font-weight:800}
+    [hidden]{display:none!important}@media(max-width:390px){.shell{padding-left:14px;padding-right:14px}.card{padding:21px 18px}.buttons{gap:7px}.buttons button{font-size:14px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header><div><p class="eyebrow">2.º Bach · Social Issues</p><h1>Practica a tu ritmo</h1></div><div class="learned" id="learned"></div></header>
+    <nav class="tabs" aria-label="Tipo de práctica"><button id="cardsTab" class="tab" role="tab" aria-selected="true" type="button">Descubrir</button><button id="writingTab" class="tab" role="tab" aria-selected="false" type="button">Escribir</button></nav>
+    <div class="toolbar"><label class="filter" for="filter">Palabras <select id="filter"><option value="pending">Por aprender</option><option value="all">Todas</option><option value="difficult">Me cuestan</option></select></label><span class="position" id="position"></span></div>
+    <main>
+      <section id="cardsView">
+        <div class="card">
+          <div class="card-top"><span class="card-label">Lee y descubre</span><button id="sound" class="sound" type="button" aria-label="Escuchar pronunciación">🔊 Escuchar</button></div>
+          <div class="word-wrap"><div class="pictogram" id="cardIcon" aria-hidden="true"></div><h2 class="word" id="cardWord"></h2><p class="sentence" id="sentence"></p></div>
+          <button class="reveal" id="reveal" type="button">Toca para ver la traducción</button><div class="translation" id="translation" hidden></div>
+        </div>
+        <div class="buttons"><button type="button" class="action again" id="again">Me cuesta · repasaré</button><button type="button" class="action known" id="known">Ya la sé →</button></div>
+        <p class="helper">Sin tiempo ni puntos. Vuelve a las palabras que te cuestan cuando quieras.</p>
+      </section>
+      <section id="writingView" hidden>
+        <div class="write-panel">
+          <p class="write-label">Escribe en inglés</p><div class="write-icon" id="writeIcon" aria-hidden="true"></div>
+          <h2 class="write-term" id="spanish"></h2><label class="write-prompt" for="written">¿Qué expresión de la lista significa esto?</label>
+          <input id="written" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe la palabra o expresión">
+          <div class="write-actions"><button type="button" id="check" class="check">Comprobar</button><button type="button" id="hint" class="hint">Pista</button></div>
+          <p class="response" id="response" role="status"></p>
+          <button type="button" class="write-next" id="writeNext">Ver respuesta y seguir →</button>
+        </div>
+        <p class="helper">Puedes intentarlo tantas veces como quieras; no hay penalización.</p>
+      </section>
+      <section id="emptyView" class="empty" hidden><div class="empty-icon">🌱</div><h2 id="emptyTitle">¡Buen trabajo!</h2><p id="emptyText">Ya has repasado todas las palabras de este grupo.</p><button id="reviewAll" type="button">Ver todas las palabras</button></section>
+    </main>
+  </div>
+  <script src="../vocabulary.js"></script>
+  <script>
+  (() => {
+    "use strict";
+    const list=window.VOCABULARY;
+    const $=id=>document.getElementById(id);
+    const examples={
+      "Aware of":"Are you aware of the problem?",
+      "Charity":"The charity helps local families.",
+      "Current affairs":"We discussed current affairs in class.",
+      "Demonstration":"A peaceful demonstration filled the square.",
+      "Economic disparity":"Economic disparity affects access to education.",
+      "Empathy":"Empathy helps us understand other people.",
+      "Fake news":"Check the source before sharing fake news.",
+      "Freedom of speech":"Freedom of speech protects different opinions.",
+      "Get involved":"Young people can get involved in their community.",
+      "Gun control":"They debated gun control in parliament.",
+      "Hunger":"The food bank helps people facing hunger.",
+      "Immigration":"The article examines immigration policies.",
+      "Inequality":"Education can reduce inequality.",
+      "Make a difference":"One volunteer can make a difference.",
+      "Pass a law":"Parliament may pass a law next month.",
+      "Pay taxes":"People pay taxes to fund public services.",
+      "Point out":"Please point out the main problem.",
+      "Poverty":"The report focuses on child poverty.",
+      "Public housing":"The council built more public housing.",
+      "Raise money":"The students raise money for charity.",
+      "Racism":"The campaign speaks out against racism.",
+      "Shelter":"They found shelter during the storm.",
+      "Spokesperson":"The spokesperson answered questions.",
+      "Stand up for":"Stand up for people who need support.",
+      "Take action":"We can take action to protect the environment.",
+      "Take part in":"Many students take part in the project.",
+      "Volunteer":"She is a volunteer at the centre."
+    };
+    let states={};
+    try{states=JSON.parse(localStorage.getItem("socialIssuesPractice")||"{}")||{};}catch{}
+    const sequence=Array.from({length:list.length},(_,i)=>i);
+    let mode="cards",filter="pending",pointer=0,revealed=false,answerVisible=false,tipCount=0;
+    const normalize=text=>text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g,"").replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ");
+    const choicesFor=word=>word.en.split(/\s*\/\s*/).map(normalize);
+    function save(){try{localStorage.setItem("socialIssuesPractice",JSON.stringify(states));}catch{}}
+    function indices(){return sequence.filter(i=>filter==="all"||filter==="difficult"?filter==="all"||states[i]==="difficult":states[i]!=="known");}
+    function current(){const available=indices();return available.length?{available,index:available[pointer%available.length],word:list[available[pointer%available.length]]}:null;}
+    function update(){
+      const known=Object.values(states).filter(x=>x==="known").length;
+      $("learned").textContent=known+" / "+list.length+" aprendidas";
+      $("cardsTab").setAttribute("aria-selected",String(mode==="cards"));
+      $("writingTab").setAttribute("aria-selected",String(mode==="writing"));
+      const item=current(),empty=!item;
+      $("cardsView").hidden=empty||mode!=="cards";$("writingView").hidden=empty||mode!=="writing";$("emptyView").hidden=!empty;
+      $("position").textContent=item?(pointer%item.available.length+1)+" de "+item.available.length:"";
+      if(empty){$("emptyTitle").textContent=filter==="difficult"?"No tienes palabras marcadas como difíciles":"¡Has repasado este grupo!";$("emptyText").textContent=filter==="difficult"?"Marca «Me cuesta» en las tarjetas para reunir aquí las palabras que quieras repasar.":"Puedes volver a ver toda la lista cuando quieras.";return;}
+      $("cardIcon").textContent=item.word.icon;$("cardWord").textContent=item.word.en;$("sentence").textContent=examples[item.word.en]||"";
+      $("translation").textContent=item.word.es;$("translation").hidden=!revealed;$("reveal").hidden=revealed;
+      $("writeIcon").textContent=item.word.icon;$("spanish").textContent=item.word.es;
+      $("written").value="";$("response").textContent="";$("response").classList.remove("good");tipCount=0;answerVisible=false;
+      $("writeNext").textContent="Ver respuesta y seguir →";
+    }
+    function advance(mark){
+      const item=current();if(!item)return;
+      if(mark){states[item.index]=mark;save();}
+      const after=indices();
+      if(after.length)pointer=mark==="known"?pointer%after.length:(pointer+1)%after.length;
+      revealed=false;update();
+    }
+    function selectMode(newMode){mode=newMode;revealed=false;update();}
+    $("cardsTab").addEventListener("click",()=>selectMode("cards"));
+    $("writingTab").addEventListener("click",()=>selectMode("writing"));
+    $("filter").addEventListener("change",event=>{filter=event.target.value;pointer=0;revealed=false;update();});
+    $("reveal").addEventListener("click",()=>{revealed=true;$("translation").hidden=false;$("reveal").hidden=true;});
+    $("again").addEventListener("click",()=>advance("difficult"));
+    $("known").addEventListener("click",()=>advance("known"));
+    $("sound").addEventListener("click",()=>{
+      const item=current();if(!item||!("speechSynthesis" in window))return;
+      speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(item.word.en);utterance.lang="en-GB";utterance.rate=.85;speechSynthesis.speak(utterance);
+    });
+    function check(){
+      const item=current();if(!item)return;
+      const value=normalize($("written").value);
+      if(!value){$("response").textContent="Escribe una respuesta para comprobarla.";return;}
+      if(choicesFor(item.word).includes(value)){
+        states[item.index]="known";save();$("response").classList.add("good");$("response").textContent="¡Sí! "+item.word.en+" significa «"+item.word.es+"».";
+        answerVisible=true;$("writeNext").textContent="Seguir →";
+        $("learned").textContent=Object.values(states).filter(x=>x==="known").length+" / "+list.length+" aprendidas";
+      }else{
+        states[item.index]="difficult";save();$("response").classList.remove("good");$("response").textContent="Aún no. Prueba otra vez o pide una pista.";
+      }
+    }
+    $("check").addEventListener("click",check);
+    $("written").addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();check();}});
+    $("hint").addEventListener("click",()=>{
+      const item=current();if(!item)return;
+      const words=item.word.en.split(" ");
+      tipCount++;
+      $("response").classList.remove("good");
+      $("response").textContent=tipCount===1?"Empieza por «"+item.word.en.charAt(0).toUpperCase()+"».":
+        "Tiene "+words.length+" palabra"+(words.length===1?"":"s")+" y empieza por «"+item.word.en.slice(0,Math.min(3,item.word.en.length))+"…».";
+    });
+    $("writeNext").addEventListener("click",()=>{
+      const item=current();if(!item)return;
+      if(!answerVisible){
+        states[item.index]="difficult";save();answerVisible=true;
+        $("response").classList.remove("good");$("response").textContent="Respuesta: "+item.word.en;
+        $("writeNext").textContent="Seguir →";
+      }else advance(null);
+    });
+    $("reviewAll").addEventListener("click",()=>{$("filter").value="all";filter="all";pointer=0;update();});
+    update();
+  })();
+  </script>
+</body>
+</html>
