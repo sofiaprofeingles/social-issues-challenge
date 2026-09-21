@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121a2d">
+  <meta name="description" content="Juego de vocabulario Social Issues para 2.º de Bachillerato.">
+  <title>Social Issues Challenge</title>
+  <style>
+    :root{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#f5f6fb;background:#121a2d}
+    *{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 90% 12%,#293357 0,transparent 43%),#121a2d}button,input{font:inherit}button{cursor:pointer}
+    .shell{width:min(100%,620px);min-height:100dvh;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-size:13px;letter-spacing:.18em;font-weight:900;color:#b5f297;text-transform:uppercase}.score{font-size:15px;font-weight:800;color:#e9eefb;font-variant-numeric:tabular-nums}
+    .screen{flex:1;display:flex;flex-direction:column;justify-content:center}.hidden{display:none!important}
+    .eyebrow{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#b5f297;font-weight:850;margin:0 0 15px}
+    h1{font-size:clamp(43px,9vw,70px);letter-spacing:-.065em;line-height:1.05;margin:0 0 18px}h2{font-size:clamp(29px,7vw,45px);line-height:1.13;letter-spacing:-.035em;margin:0}
+    p{line-height:1.45}.intro-copy{font-size:18px;color:#d1d9eb;margin:0 0 24px;max-width:32ch}
+    .chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}.chip{border:1px solid #ffffff29;background:#ffffff0d;color:#dde7f3;border-radius:100px;padding:8px 12px;font-size:13px}
+    .name-label{font-size:14px;color:#d3deef;margin-bottom:9px;font-weight:700}input{width:100%;font-size:18px;padding:16px;border:1px solid #65718b;background:#1d2942;color:#fff;border-radius:16px;margin-bottom:16px}input:focus-visible,button:focus-visible{outline:3px solid #b5f297;outline-offset:3px}
+    button.primary{background:#b5f297;color:#132018;font-weight:900;border:0;border-radius:16px;padding:17px 22px;min-height:56px;box-shadow:0 8px 30px #a8ea7830}
+    button.primary:hover{background:#c9ffaa}.small-note{font-size:13px;color:#9eacc3;text-align:center;margin:18px 0 0}
+    .game{justify-content:flex-start;padding-top:clamp(24px,7vh,70px)}.meta{display:flex;justify-content:space-between;color:#b7c6db;font-size:14px;font-weight:750;margin-bottom:12px}
+    .meter{height:9px;background:#ffffff25;border-radius:20px;overflow:hidden;margin-bottom:28px}.meter-fill{width:100%;height:100%;background:#b5f297;transition:background .25s}
+    .mode{color:#b5f297;font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px}
+    .question{min-height:130px;display:flex;flex-direction:column;justify-content:center;gap:12px;margin-bottom:22px}.prompt{font-size:17px;color:#bdc9db;margin:0}.term{font-size:clamp(27px,7.5vw,42px);line-height:1.16;letter-spacing:-.025em;font-weight:850;margin:0}.icon{font-size:37px;line-height:1}
+    .answers{display:grid;gap:10px}.answer{width:100%;text-align:left;border:1px solid #53617b;background:#23324d;color:#f5f6fb;padding:16px 18px;border-radius:17px;min-height:59px;font-size:17px;font-weight:650;line-height:1.2;transition:transform .15s,background .15s,border-color .15s}
+    .answer:not(:disabled):active{transform:scale(.98)}.answer:not(:disabled):hover{background:#304364}.answer:disabled{cursor:default}
+    .answer.correct{background:#1f6544;border-color:#81f7aa;color:#fff}.answer.wrong{background:#794148;border-color:#ff9ca3;color:#fff}.answer.dim{opacity:.54}
+    .feedback{min-height:74px;margin-top:18px;font-weight:700;line-height:1.4;color:#d7e4f7}.feedback strong{color:#b5f297}.feedback .no{color:#ffadaf}
+    .next{margin-top:auto;margin-bottom:10px}.results{text-align:center;align-items:center}.medal{font-size:70px;margin-bottom:15px}.total{font-size:clamp(64px,16vw,106px);font-weight:950;letter-spacing:-.07em;color:#b5f297;line-height:1.1;margin:16px 0 0}.points{font-size:20px;color:#d5def0;margin:0 0 24px}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:27px}.stat{background:#ffffff0e;border:1px solid #ffffff20;border-radius:18px;padding:16px 10px}.stat b{display:block;font-size:24px}.stat span{font-size:13px;color:#b6c5d8}
+    .actions{width:100%;display:grid;gap:10px}.secondary{border:1px solid #62708a;background:#ffffff0b;color:#fff;border-radius:16px;min-height:52px;padding:12px 16px;font-weight:750}
+    .leader-note{font-size:14px;color:#c2cee0;margin:22px 0 0}
+    @media(min-width:700px){.shell{padding-left:32px;padding-right:32px}.answer{min-height:65px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+    .entry-note{font-size:13px;color:#b6c5d8;line-height:1.4;margin:-5px 0 17px}
+    .entry-error{color:#ffadaf;font-size:14px;min-height:18px;margin:0 0 12px}
+    .group-label{display:block;font-size:14px;color:#d3deef;margin-bottom:8px;font-weight:700}
+    select{width:100%;font:inherit;font-size:17px;padding:13px;border:1px solid #65718b;background:#1d2942;color:#fff;border-radius:14px;margin-bottom:15px}
+    select:focus-visible,a:focus-visible{outline:3px solid #b5f297;outline-offset:3px}
+    .shared-link{color:#b5f297;font-weight:800;display:inline-block;margin:17px 0;text-align:center}
+    .save-status{color:#d1d9eb;font-size:15px;line-height:1.4;min-height:24px;margin:11px 0}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top"><div class="brand">Social Issues · Challenge</div><div class="score" id="headerScore"></div></div>
+    <section id="intro" class="screen">
+      <p class="eyebrow">2.º de Bachillerato</p>
+      <h1>¿Cuántas sabes?</h1>
+      <p class="intro-copy">12 preguntas rápidas para descubrir el vocabulario de <em>Social Issues</em>. Cuanto antes aciertes, más puntos ganas.</p>
+      <div class="chip-row"><span class="chip">Traducciones</span><span class="chip">Contexto</span><span class="chip">Verdadero o falso</span></div>
+      <label for="nickname" class="name-label">Alias para la clase</label>
+      <input id="nickname" maxlength="24" autocomplete="nickname" placeholder="Por ejemplo, Sofía H.">
+      <label for="group" class="group-label">Grupo</label>
+      <select id="group"><option value="2.º C">2.º C</option><option value="2.º D">2.º D</option><option value="Otro">Otro</option></select>
+      <p class="entry-note">Usa un alias; evita escribir tu nombre completo. El récord se guardará únicamente en este dispositivo.</p>
+      <p class="entry-error" id="entryError" role="status"></p>
+      <button type="button" class="primary" id="start">Empezar partida</button>
+      <p class="small-note">Sin cuenta · El récord se guarda en este dispositivo</p>
+    </section>
+    <section id="game" class="screen game hidden" aria-live="polite">
+      <div class="meta"><span id="questionNumber"></span><span id="seconds">15 s</span></div>
+      <div class="meter"><div class="meter-fill" id="timeFill"></div></div>
+      <p class="mode" id="mode"></p>
+      <div class="question"><div class="icon" id="icon" aria-hidden="true"></div><p class="prompt" id="prompt"></p><h2 class="term" id="term"></h2></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback" role="status"></div>
+      <button type="button" class="primary next hidden" id="next">Siguiente →</button>
+    </section>
+    <section id="results" class="screen results hidden">
+      <div class="medal" id="medal" aria-hidden="true">🏅</div>
+      <p class="eyebrow">Fin de la partida</p>
+      <h2 id="resultHeading">Tu resultado</h2>
+      <div class="total" id="finalScore">0</div><p class="points">puntos</p>
+      <div class="result-grid"><div class="stat"><b id="correctCount">0/12</b><span>aciertos</span></div><div class="stat"><b id="bestScore">0</b><span>tu récord en este móvil</span></div></div>
+      <div class="actions"><button class="primary" id="restart" type="button">Jugar otra vez</button><button class="secondary" id="share" type="button">Compartir resultado</button></div>
+      <p class="save-status" id="saveStatus" role="status"></p>
+      <button class="secondary hidden" id="retrySave" type="button">Reintentar guardar</button>
+      <p class="leader-note">Cada partida trae nuevas palabras.</p>
+    </section>
+  </div>
+  <script src="vocabulary.js"></script>
+  <script>
+  (() => {
+    "use strict";
+    const words = window.VOCABULARY;
+    const $ = id => document.getElementById(id);
+    const contexts = [
+      ["Charity","The local ___ raised funds for families after the flood."],
+      ["Death penalty","Several countries have abolished the ___."],
+      ["Fake news","Check the source before you share ___ online."],
+      ["Freedom of speech","Journalists defend ___ when they report unpopular opinions."],
+      ["Gun control","The debate about ___ concerns laws on owning firearms."],
+      ["Immigration","The article discusses ___ and border policies."],
+      ["Living conditions","Clean water and safe homes improve people's ___."],
+      ["Economic disparity","A huge gap between rich and poor is a sign of ___."],
+      ["Empathy","Understanding how someone else feels requires ___."],
+      ["Hunger","The food bank helps families facing ___."],
+      ["Multicultural","The city has communities from many backgrounds; it is ___."],
+      ["Pass a law","Parliament can ___ to protect tenants."],
+      ["Raise money","Students sold cakes to ___ for a shelter."],
+      ["Shelter","During the storm, they found safety in a ___."],
+      ["Stand up for","She decided to ___ her classmate when others were unfair."],
+      ["Volunteer","He works without pay at the community centre as a ___."],
+      ["Point out","The teacher will ___ the mistake in the report."],
+      ["Public housing","The council built ___ for families on low incomes."],
+      ["Spokesperson","The ___ answered questions on behalf of the organisation."],
+      ["Pay taxes","People ___ to fund public services."],
+      ["Current affairs","The news programme discusses ___ every evening."],
+      ["Demonstration","Thousands attended a ___ in the city centre."],
+      ["Racism","Judging someone unfairly because of their race is ___."],
+      ["Take part in","Many students want to ___ the school campaign."]
+    ];
+    const byEnglish = new Map(words.map(w => [w.en,w]));
+    const contextEntries = contexts.map(([en,sentence]) => ({word:byEnglish.get(en),sentence})).filter(x=>x.word);
+    const shuffle = list => { const copy = [...list]; for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];} return copy; };
+    let round=[],index=0,score=0,correct=0,streak=0,locked=false,remaining=15000,lastTick=0,raf=0,nickname="",classGroup="",runId="";
+    const TYPES=["en-es","es-en","en-es","context","en-es","true-false","es-en","context","en-es","es-en","true-false","en-es"];
+    function getBatch(){
+      let pending;
+      try { pending = JSON.parse(localStorage.getItem("socialIssuesPending")||"null"); } catch { pending=null; }
+      if(!Array.isArray(pending) || pending.some(n=>!Number.isInteger(n)||n<0||n>=words.length)) pending=shuffle(words.map((_,i)=>i));
+      if(pending.length<12){
+        const used=new Set(pending);
+        pending.push(...shuffle(words.map((_,i)=>i).filter(n=>!used.has(n))));
+      }
+      const selected=pending.splice(0,12);
+      try{localStorage.setItem("socialIssuesPending",JSON.stringify(pending));}catch{}
+      const chosen=selected.map(n=>words[n]);
+      for(const slot of [3,7]){
+        if(contextEntries.some(c=>c.word===chosen[slot]))continue;
+        const swap=chosen.findIndex((word,i)=>i>slot && contextEntries.some(c=>c.word===word));
+        if(swap!==-1)[chosen[slot],chosen[swap]]=[chosen[swap],chosen[slot]];
+      }
+      return chosen;
+    }
+    function options(correctValue,field,source){
+      const values=shuffle(words.filter(w=>w!==source).map(w=>w[field]).filter(v=>v!==correctValue));
+      return shuffle([correctValue,...new Set(values)].slice(0,4));
+    }
+    function makeQuestion(word,type){
+      if(type==="context"){
+        const item=shuffle(contextEntries.filter(c=>c.word===word))[0];
+        if(item) return {mode:"Complete the sentence",prompt:"Elige la expresión que completa la frase.",term:item.sentence,icon:"🧩",choices:options(word.en,"en",word),answer:word.en,meaning:word.en+" = "+word.es};
+        type="en-es";
+      }
+      if(type==="true-false"){
+        const truth=Math.random()<.5;
+        const other=shuffle(words.filter(w=>w.es!==word.es))[0];
+        const shown=truth?word.es:other.es;
+        return {mode:"True or false?",prompt:"¿Es correcta esta equivalencia?",term:word.en+" = "+shown,icon:word.icon,choices:["Verdadero","Falso"],answer:truth?"Verdadero":"Falso",meaning:word.en+" = "+word.es};
+      }
+      if(type==="es-en")return {mode:"Español → English",prompt:"¿Cómo se dice en inglés?",term:word.es,icon:word.icon,choices:options(word.en,"en",word),answer:word.en,meaning:word.en+" = "+word.es};
+      return {mode:"English → Español",prompt:"¿Qué significa?",term:word.en,icon:word.icon,choices:options(word.es,"es",word),answer:word.es,meaning:word.en+" = "+word.es};
+    }
+    function stopClock(){cancelAnimationFrame(raf);lastTick=0;}
+    function tick(now){
+      if(locked)return;
+      if(lastTick)remaining-=now-lastTick;
+      lastTick=now;
+      const fraction=Math.max(0,remaining/15000);
+      $("seconds").textContent=Math.ceil(Math.max(0,remaining)/1000)+" s";
+      $("timeFill").style.width=(fraction*100)+"%";
+      $("timeFill").style.background=fraction<.25?"#ff9ca3":"#b5f297";
+      if(remaining<=0){answer(null);return;}
+      raf=requestAnimationFrame(tick);
+    }
+    function startClock(){stopClock();remaining=15000;$("timeFill").style.width="100%";raf=requestAnimationFrame(tick);}
+    function display(){
+      locked=false;
+      const q=round[index];
+      $("headerScore").textContent=score+" pts";
+      $("questionNumber").textContent=(index+1)+" / "+round.length;
+      $("mode").textContent=q.mode;$("prompt").textContent=q.prompt;$("term").textContent=q.term;$("icon").textContent=q.icon;
+      $("feedback").textContent="";$("next").classList.add("hidden");
+      $("answers").replaceChildren();
+      for(const choice of q.choices){const button=document.createElement("button");button.type="button";button.className="answer";button.textContent=choice;button.addEventListener("click",()=>answer(choice));$("answers").append(button);}
+      startClock();
+    }
+    function answer(choice){
+      if(locked)return;
+      locked=true;stopClock();
+      const q=round[index],hit=choice===q.answer;
+      if(hit){correct++;streak++;const gained=100+Math.ceil(Math.max(0,remaining)/1000)*5+Math.min(40,(streak-1)*10);score+=gained;$("feedback").innerHTML="<strong>¡Correcto! +"+gained+" puntos</strong>";}
+      else{streak=0;$("feedback").textContent=(choice===null?"¡Se acabó el tiempo! ":"Casi. ")+q.meaning;}
+      for(const button of $("answers").children){button.disabled=true;if(button.textContent===q.answer)button.classList.add("correct");else if(button.textContent===choice)button.classList.add("wrong");else button.classList.add("dim");}
+      $("headerScore").textContent=score+" pts";$("next").textContent=index===round.length-1?"Ver resultado →":"Siguiente →";$("next").classList.remove("hidden");
+    }
+    function start(){
+      nickname=$("nickname").value.trim().replace(/\s+/g," ");classGroup=$("group").value;
+      if(!/^[\p{L}\p{N} _.-]{2,24}$/u.test(nickname)){$("entryError").textContent="Escribe un alias de 2 a 24 caracteres.";$("nickname").focus();return;}
+      $("entryError").textContent="";localStorage.setItem("socialIssuesAlias",nickname);localStorage.setItem("socialIssuesGroup",classGroup);runId=crypto.randomUUID();
+      const selected=getBatch();
+      round=selected.map((word,i)=>makeQuestion(word,TYPES[i]));
+      index=0;score=0;correct=0;streak=0;
+      $("intro").classList.add("hidden");$("results").classList.add("hidden");$("game").classList.remove("hidden");display();
+    }
+    function finish(){
+      stopClock();$("game").classList.add("hidden");$("results").classList.remove("hidden");
+      let record=0;try{record=Number(localStorage.getItem("socialIssuesBest")||0);}catch{}
+      if(score>record){try{localStorage.setItem("socialIssuesBest",String(score));}catch{}}
+      $("resultHeading").textContent=nickname?nickname+", este es tu resultado":"Tu resultado";
+      $("medal").textContent=correct>=10?"🏆":correct>=7?"🏅":"🚀";
+      $("finalScore").textContent=score;$("correctCount").textContent=correct+"/"+round.length;$("bestScore").textContent=Math.max(score,record);
+      $("headerScore").textContent="";saveResult();
+    }
+    function saveResult(){
+      $("retrySave").classList.add("hidden");
+      try{
+        const history=JSON.parse(localStorage.getItem("socialIssuesHistory")||"[]");
+        history.unshift({runId,alias:nickname,group:classGroup,score,correct,date:new Date().toISOString()});
+        localStorage.setItem("socialIssuesHistory",JSON.stringify(history.slice(0,20)));
+        $("saveStatus").textContent="Resultado guardado en este dispositivo.";
+      }catch{$("saveStatus").textContent="Tu puntuación se muestra arriba, pero no se ha podido guardar en este dispositivo.";}
+    }
+    $("nickname").value=localStorage.getItem("socialIssuesAlias")||"";
+    $("group").value=localStorage.getItem("socialIssuesGroup")||"2.º C";
+    $("retrySave").addEventListener("click",saveResult);
+    $("start").addEventListener("click",start);
+    $("nickname").addEventListener("keydown",e=>{if(e.key==="Enter")start();});
+    $("next").addEventListener("click",()=>{if(index===round.length-1)finish();else{index++;display();}});
+    $("restart").addEventListener("click",start);
+    $("share").addEventListener("click",async()=>{
+      const message=(nickname||"Mi resultado")+" en Social Issues Challenge: "+score+" puntos, "+correct+"/"+round.length+" aciertos. ¿Lo superas? "+location.href;
+      if(navigator.share){try{await navigator.share({title:"Social Issues Challenge",text:message});return;}catch{}}
+      try{await navigator.clipboard.writeText(message);$("share").textContent="Resultado copiado ✓";setTimeout(()=>$("share").textContent="Compartir resultado",2400);}catch{$("share").textContent=message;}
+    });
+    document.addEventListener("visibilitychange",()=>{if(document.hidden && !locked)stopClock();else if(!document.hidden && !locked && !$("game").classList.contains("hidden"))raf=requestAnimationFrame(tick);});
+  })();
+  </script>
+</body>
+</html>
